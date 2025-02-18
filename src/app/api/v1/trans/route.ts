@@ -42,7 +42,7 @@ import { NextRequest, NextResponse } from "next/server";
 //   }
 // }
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     if (mongoose.connection.readyState !== 1) {
       try {
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   }
 }
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
     if (mongoose.connection.readyState !== 1) {
       try {

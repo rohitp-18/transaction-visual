@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import Transaction from "@/models/transactionModel";
-import exp from "constants";
 
-export async function PUT(req: NextRequest, res: NextResponse) {
+export async function PUT(req: NextRequest): Promise<NextResponse> {
   try {
     if (mongoose.connection.readyState !== 1) {
       try {
@@ -55,7 +54,7 @@ export async function PUT(req: NextRequest, res: NextResponse) {
   }
 }
 
-export async function DELETE(req: NextRequest, res: NextResponse) {
+export async function DELETE(req: NextRequest): Promise<NextResponse> {
   try {
     if (mongoose.connection.readyState !== 1) {
       try {

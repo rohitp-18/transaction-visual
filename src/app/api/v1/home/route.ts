@@ -1,8 +1,10 @@
+"use server";
+
 import Transaction from "@/models/transactionModel";
 import mongoose from "mongoose";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
-export async function GET(res: NextResponse) {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     if (mongoose.connection.readyState !== 1) {
       if (!process.env.MONGODB_URI) throw new Error("MongoDB URI is missing");
