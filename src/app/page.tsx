@@ -1,101 +1,286 @@
-import Image from "next/image";
+"use client";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { ITransaction } from "@/models/transactionModel";
+import React, { act, useEffect, useState } from "react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  BarChart,
+  XAxis,
+  YAxis,
+  Legend,
+  Bar,
+} from "recharts";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [transactions, setTransactions] = useState<any>();
+  const [loading, setLoading] = useState(true);
+  const [categoryBreakdown, setCategoryBreakdown] = useState<any>();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  useEffect(() => {
+    fetch("/api/v1/home")
+      .then((res) => res.json())
+      .then((data) => {
+        setTransactions(data);
+      });
+  }, []);
+
+  const getRandomColor = () => {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  };
+
+  useEffect(() => {
+    if (transactions) {
+      setCategoryBreakdown(
+        Object.keys(transactions.categoryBreakdown).map((key) => ({
+          name: key,
+          value: transactions.categoryBreakdown[key],
+          color: getRandomColor(),
+        }))
+      );
+    }
+  }, [transactions]);
+
+  return (
+    <>
+      {transactions && (
+        <>
+          <section className="max-w-6xl mx-auto p-4">
+            <h1 className="text-center py-4">Transaction Visualizer</h1>
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="bg-white p-4 text-base shadow-md rounded-md mb-3">
+                <h2 className="text-center opacity-90 font-bold">
+                  Total Transactions
+                </h2>
+                <p className="text-center text-3xl pt-3 pb-2 text-blue-900 font-semibold">
+                  ₹{transactions.total}
+                </p>
+              </div>
+              <div className="bg-white p-4 text-base shadow-md rounded-md mb-3">
+                <h2 className="text-center opacity-90 font-bold">
+                  Total Income
+                </h2>
+                <p className="text-center text-3xl pt-3 pb-2 text-blue-900 font-semibold">
+                  ₹{transactions.credit}
+                </p>
+              </div>
+              <div className="bg-white p-4 text-base shadow-md rounded-md mb-3">
+                <h2 className="text-center opacity-90 font-bold">
+                  Total Expenses
+                </h2>
+                <p className="text-center text-3xl pt-3 pb-2 text-blue-900 font-semibold">
+                  ₹{transactions.debit}
+                </p>
+              </div>
+              <div className="bg-white px-4 pt-4 pb-1 flex items-center flex-col shadow-md rounded-md mb-3">
+                <h2 className="text-center font-bold">Categories Breakdown</h2>
+                <PieChart
+                  width={300}
+                  height={300}
+                  className="flex justify-center"
+                >
+                  <Pie
+                    data={
+                      categoryBreakdown &&
+                      categoryBreakdown.map((key: any) => key)
+                    }
+                    dataKey="value"
+                    cx={150}
+                    cy={150}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    label
+                  >
+                    {categoryBreakdown &&
+                      categoryBreakdown.map((key: any) => (
+                        <Cell key={`cell-${key.name}`} fill={key.color} />
+                      ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </div>
+              <div className="bg-white col-span-1 md:col-span-2 p-4 shadow-md rounded-md mb-3">
+                <h2 className="text-center font-bold mb-4">
+                  Recent Transactions
+                </h2>
+                <Table className="w-full border-collapse bg-white shadow-md rounded-lg">
+                  <TableHeader>
+                    <TableRow className="bg-gray-200">
+                      <TableHead className="border p-3 text-left">ID</TableHead>
+
+                      <TableHead className="border p-3 text-left">
+                        Name
+                      </TableHead>
+
+                      <TableHead className="border p-3 text-left">
+                        Amount
+                      </TableHead>
+
+                      <TableHead className="border p-3 text-left">
+                        Date
+                      </TableHead>
+                      <TableHead className="border p-3 text-left">
+                        Category
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {!transactions.recentTransactions ||
+                      (transactions.recentTransactions.length === 0 && (
+                        <TableRow className="h-32 opacity-80">
+                          <TableCell colSpan={5} className="text-center">
+                            No transactions found
+                          </TableCell>
+                        </TableRow>
+                      ))}
+
+                    {transactions.recentTransactions.map(
+                      (transaction: ITransaction) => (
+                        <TableRow
+                          key={transaction._id}
+                          className="hover:bg-gray-100 cursor-pointer"
+                        >
+                          <TableCell className="border p-3">
+                            {transaction._id}
+                          </TableCell>
+                          <TableCell className="border p-3">
+                            {transaction.name}
+                          </TableCell>
+                          <TableCell
+                            className={`border p-3 ${
+                              transaction.type === "credit"
+                                ? "text-red-500"
+                                : "text-green-500"
+                            }`}
+                          >
+                            {transaction.amount}
+                          </TableCell>
+                          <TableCell className="border p-3">
+                            {new Date(transaction.date).toLocaleDateString()}
+                          </TableCell>
+
+                          <TableCell className="border p-3">
+                            {transaction.category}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="bg-white p-4 shadow-md rounded-md">
+                <h2 className="text-center font-bold">Predefined Categories</h2>
+                <div className="flex flex-col gap-4 mt-4">
+                  <div className="bg-white p-1">
+                    <p className="text-center">Salary</p>
+                  </div>
+                  <div className="bg-white p-1">
+                    <p className="text-center">Food</p>
+                  </div>
+                  <div className="bg-white p-1">
+                    <p className="text-center">Transport</p>
+                  </div>
+                  <div className="bg-white p-1">
+                    <p className="text-center">Entertainment</p>
+                  </div>
+                  <div className="bg-white p-1">
+                    <p className="text-center">Utilities</p>
+                  </div>
+                  <div className="bg-white p-1">
+                    <p className="text-center">Healthcare</p>
+                  </div>
+                  <div className="bg-white p-1">
+                    <p className="text-center">Others</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow-md rounded-md mb-3">
+                <h2 className="text-center font-bold">Spending Insights</h2>
+                <div className="flex flex-col gap-4 mt-8">
+                  <div className="bg-white p-2">
+                    <p className="text-center">
+                      Highest Spending Category:{" "}
+                      <b>{transactions.highestSpendingCategory}</b>
+                    </p>
+                  </div>
+                  <div className="bg-white p-2">
+                    <p className="text-center">
+                      Lowest Spending Category:{" "}
+                      <b>{transactions.lowestSpendingCategory}</b>
+                    </p>
+                  </div>
+                  <div className="bg-white p-2">
+                    <p className="text-center">
+                      Average Transaction Amount:{" "}
+                      <b>₹{transactions.averageTransactionAmount}</b>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white p-4 shadow-md rounded-md mb-3">
+                <h2 className="text-center font-bold mb-3">Budget vs Actual</h2>
+                <BarChart
+                  width={300}
+                  height={300}
+                  data={[
+                    {
+                      name: "credit",
+                      budget: transactions.budgetVsActual.credit.budget,
+                      actual: transactions.budgetVsActual.credit.actual,
+                    },
+                    {
+                      name: "debit",
+                      budget: transactions.budgetVsActual.debit.budget,
+                      actual: transactions.budgetVsActual.debit.actual,
+                    },
+                  ]}
+                  className="mx-auto"
+                >
+                  <XAxis dataKey="category" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar width={10} dataKey="budget" fill="#8884d8" />
+                  <Bar width={10} dataKey="actual" fill="#82ca9d" />
+                </BarChart>
+              </div>
+              <div className="bg-white p-4 shadow-md rounded-md mb-3">
+                <h2 className="text-center font-bold">Budget</h2>
+                <div className="flex flex-col gap-4 mt-8">
+                  <div className="bg-white p-2">
+                    <p className="text-center">
+                      Income:{" "}
+                      <b>₹{transactions.budgetVsActual.credit.budget}</b>
+                    </p>
+                  </div>
+                  <div className="bg-white p-2">
+                    <p className="text-center">
+                      Expense:{" "}
+                      <b>₹{transactions.budgetVsActual.debit.budget}</b>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </section>
+        </>
+      )}
+    </>
   );
 }

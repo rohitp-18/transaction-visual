@@ -1,3 +1,5 @@
+# Transaction Visualization
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -19,6 +21,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Functionalities
+
+- **Transaction Overview**: Visualize all transactions in a comprehensive dashboard.
+- **Filter Transactions**: Filter transactions by date, amount, category, and more.
+- **Detailed View**: Click on a transaction to see detailed information.
+- **Add Transactions**: Manually add new transactions to the visualization.
+- **Edit Transactions**: Modify existing transactions.
+- **Delete Transactions**: Remove transactions from the visualization.
+- **Responsive Design**: Fully responsive design for mobile and desktop views.
+- **Categories Breakdown**: View a breakdown of transactions by categories in a pie chart or bar graph.
 
 ## Learn More
 
